@@ -1,3 +1,4 @@
-class SoundMatcher:
+class SoundMatcher(object):
+  @staticmethod
   def match(file1, file2):
-    pass
+    return False
