@@ -1,0 +1,134 @@
+
+Test cases
+---------------------------------------------------------------
+<music1_original> is a full length wav file
+<music1_encrypted> is a full length encrypted wav file
+
+<music1_original_0> is the first 30 seconds of the original
+<music1_original_1> is the second set of 30 seconds of the original
+<music1_original_2> is the third set of 30 seconds of the original
+
+The encrypted extracts have their own unique encryptions, 
+seperate from the full length encrypted wav file
+
+<music1_encrypted_0> is the first 30 seconds of the original with an encryption
+<music1_encrypted_1> is the second set of 30 seconds of the original with an encryption
+<music1_encrypted_2> is the third set of 30 seconds of the original with an encryption
+---------------------------------------------------------------
+
+Input command    ./p4500 <pathname1> <pathname2>
+Valid Result    Returns "MATCH" or "NO MATCH"
+                        and terminates with a newline.
+					
+Error Result    Returns "ERROR - Unsupported file format for <pathname1>" or
+                        "ERROR - Unsupported file format for <pathname2>"
+                        and terminates with a newline.
+							
+--------
+
+
+-------- Original vs Encrypted
+--------
+Input command     ./p4500 <music1_original> <music1_encrypted>
+Result 				"MATCH"
+							
+--------
+Input command     ./p4500 <music1_original> <music1_original>
+Result 				"MATCH"
+							
+--------
+Input command     ./p4500 <music1_encrypted> <music1_encrypted>
+Result 				"MATCH"
+							
+							
+							
+-------- Original vs Original extracts
+--------
+Input command     ./p4500 <music1_original> <music1_original_0>
+Result 				"MATCH"
+							
+--------
+Input command     ./p4500 <music1_original> <music1_original_1>
+Result 				"MATCH"
+							
+--------
+Input command     ./p4500 <music1_original> <music1_original_2>
+Result 				"MATCH"
+							
+--------
+
+
+-------- Original extract 0 vs Original extracts
+--------
+Input command     ./p4500 <music1_original_0> <music1_original_0>
+Result 				"MATCH"
+							
+--------
+Input command     ./p4500 <music1_original_0> <music1_original_1>
+Result 				"NO MATCH"
+							
+--------
+Input command     ./p4500 <music1_original_0> <music1_original_2>
+Result 				"NO MATCH"
+							
+							
+							
+-------- Original vs Encrypted extracts
+--------
+Input command     ./p4500 <music1_original> <music1_encrypted_0>
+Result 				"MATCH"
+
+--------
+Input command     ./p4500 <music1_original> <music1_encrypted_1>
+Result 				"MATCH"
+							
+--------
+Input command     ./p4500 <music1_original> <music1_encrypted_2>
+Result 				"MATCH"
+							
+--------
+
+
+-------- Original extracts vs Encrypted extracts
+--------
+Input command     ./p4500 <music1_original_0> <music1_encrypted_0>
+Result 				"MATCH"
+							
+--------
+Input command     ./p4500 <music1_original_0> <music1_encrypted_1>
+Result 				"NO MATCH"
+							
+--------
+Input command     ./p4500 <music1_original_0> <music1_encrypted_2>
+Result 				"NO MATCH"
+							
+--------
+Input command     ./p4500 <music1_original_1> <music1_encrypted_1>
+Result 				"MATCH"
+							
+--------
+Input command     ./p4500 <music1_original_2> <music1_encrypted_2>
+Result 				"MATCH"
+							
+--------
+Input command     ./p4500 <music1_original_2> <music1_encrypted_1>
+Result 				"NO MATCH"
+							
+--------
+
+
+-------- Encrypted vs Original extracts
+--------
+Input command     ./p4500 <music1_encrypted> <music1_original_0>
+Result 				"MATCH"
+
+--------
+Input command     ./p4500 <music1_encrypted> <music1_original_1>
+Result 				"MATCH"
+							
+--------
+Input command     ./p4500 <music1_encrypted> <music1_original_2>
+Result 				"MATCH"
+							
+--------
+
