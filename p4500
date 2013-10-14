@@ -1,0 +1,27 @@
+#!/usr/bin/python
+import sys
+import wave
+
+def main():
+  if len(sys.argv) != 3:
+    sys.stderr.write("ERROR This program takes 2 command line arguments.\n")
+    exit(1)
+  filename1 = sys.argv[1]
+  filename2 = sys.argv[2]
+  file1 = try_open(filename1)
+  file2 = try_open(filename2)
+  if not file1 or not file2:
+    exit(1)
+  print "ready to match!"
+
+
+def try_open(filename):
+  try:
+    f = wave.open(filename)
+    return f
+  except Exception:
+    sys.stderr.write("ERROR The file "+filename+" is not a valid wave file.\n")
+    return False
+
+if __name__ == "__main__":
+  main()
