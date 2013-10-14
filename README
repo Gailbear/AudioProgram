@@ -1,0 +1,23 @@
+CS 4500 Software Development Semester Project
+
+Group Members:
+
+Michael Coppola
+michael.n.coppola@gmail.com
+
+Kiril Geshev
+geshevk@gmail.com
+
+Stephanie Lund
+lund.s@husky.neu.edu
+
+Gail Terman
+gterman@gmail.com
+
+Instructions to compile and run:
+it should just work, because python is interpreted!
+./p4500 pathname pathname is the syntax to run the program, as specified in the assignment
+
+The only problem that might happen is if the file does not have permission to be executed.
+Fix: chmod a+x p4500
+(or whatever other permissions you want to allow it)
