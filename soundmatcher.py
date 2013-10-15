@@ -1,13 +1,25 @@
+import logging
 import numpy
 import sys
 
 # Don't judge me, it's just a prototype.
 
 class SoundMatcher(object):
-    @staticmethod
-    def match(file1, file2):
+    def grabframes(self, w):
+        chunksize = w.getnframes()
+        frames = w.readframes(chunksize)
+        chunk = numpy.fromstring(frames, dtype='uint8')
+        return chunk, len(chunk)
+
+    def match(self, file1, file2):
         f1len = file1.getnframes()
         f2len = file2.getnframes()
+
+        sample_width = file1.getsampwidth()
+
+        if sample_width != file2.getsampwidth():
+            logging.error("ERROR: Input files must have same sample width (%d != %d)", sample_width, file2.getsampwidth())
+            sys.exit(-1)
 
         # file1 is longer
         if f1len > f2len:
@@ -24,28 +36,25 @@ class SoundMatcher(object):
             shorter_len = f1len
 
         # Grab the frames of the shorter file
-        chunksize = shorter.getnframes()
-        frames = shorter.readframes(chunksize)
-        chunk = numpy.fromiter((ord(c) for c in frames), int, count=len(frames))
+        chunk, chunksize = self.grabframes(shorter)
+        haystack, haystacksize = self.grabframes(longer)
 
         lowest_dist = 500
 
-        print "Longer len: %d" % longer_len
-        print "Shorter len: %d" % shorter_len
-        print "Number of indices to test: %d" % (longer_len - shorter_len + 1)
+        iters = ((haystacksize - chunksize) / sample_width) + 1
 
         # Iterate through each possible offset of the smaller in the larger file
-        for idx in xrange(longer_len - shorter_len + 1):
+        for offset in xrange(iters):
+
+            index = offset * sample_width
 
             # Grab the frames from the larger file (at the specified offset)
-            longer.setpos(idx)
-            frames = longer.readframes(chunksize)
-            subsec = numpy.fromiter((ord(c) for c in frames), int, count=len(frames))
+            subsec = haystack[index:chunksize+index]
 
             # Do some maths
             dist = numpy.linalg.norm(subsec - chunk)
 
-            print "dist for index %d = %d" % (idx, dist)
+            logging.debug("dist for index %d = %d", index, dist)
 
             # Score this iteration
             if dist < lowest_dist:
