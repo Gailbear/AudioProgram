@@ -5,6 +5,10 @@ import sys
 # Don't judge me, it's just a prototype.
 
 class SoundMatcher(object):
+
+    def __init__(self):
+      logging.basicConfig(filename='/tmp/p4500log.txt',level=logging.DEBUG)
+
     def grabframes(self, w):
         chunksize = w.getnframes()
         frames = w.readframes(chunksize)
