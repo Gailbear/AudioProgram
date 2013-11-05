@@ -1,21 +1,25 @@
+import subprocess
 import unittest
+import nose
 import os
+from nose.tools import *
 
-me0 = '/home/geshevk/AudioProgram/TestFiles/music1_encrypted.wav'
-me1 = '/home/geshevk/AudioProgram/TestFiles/music1_encrypted_0.wav'
-me2 = '/home/geshevk/AudioProgram/TestFiles/music1_encrypted_1.wav'
-me3 = '/home/geshevk/AudioProgram/TestFiles/music1_encrypted_2.wav'
+cwd = os.getcwd()
+prog = cwd + "/p4500"
+me0 = cwd + '/TestFiles/music1_encrypted.wav'
+me1 = cwd + '/TestFiles/music1_encrypted_0.wav'
+me2 = cwd + '/TestFiles/music1_encrypted_1.wav'
+me3 = cwd + '/TestFiles/music1_encrypted_2.wav'
 
-mo0 = '/home/geshevk/AudioProgram/TestFiles/music1_original.wav'
-mo1 = '/home/geshevk/AudioProgram/TestFiles/music1_original_0.wav'
-mo2 = '/home/geshevk/AudioProgram/TestFiles/music1_original_1.wav'
-mo3 = '/home/geshevk/AudioProgram/TestFiles/music1_original_2.wav'
+mo0 = cwd + '/TestFiles/music1_original.wav'
+mo1 = cwd + '/TestFiles/music1_original_0.wav'
+mo2 = cwd + '/TestFiles/music1_original_1.wav'
+mo3 = cwd + '/TestFiles/music1_original_2.wav'
+
 
 def IsMatch(f1,f2):
-    cmd = "./p4500 -f '{0}' -f '{1}'".format(unicode(f1),unicode(f2))
-    # this no longer works
-    return (os.system(cmd)==512) # returns the exit status
-    
+    cmd = [prog,"-f",f1,"-f",f2]
+    return subprocess.check_output(cmd) == "MATCH\n"
 
 # Here's our "unit tests".
 class IsMatchTests(unittest.TestCase):
