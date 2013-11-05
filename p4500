@@ -1,50 +1,50 @@
 #!/usr/bin/python
 import sys
 import wave
+import argparse
 from soundmatcher import *
 
 def main():
-  # check for the correct number of command line arguments
-  if len(sys.argv) != 3:
-    sys.stderr.write("ERROR This program takes 2 command line arguments.\n")
-    exit(1)
-  # get the filenames
-  filename1 = sys.argv[1]
-  filename2 = sys.argv[2]
-  # try to open the files
-  file1 = try_open(filename1)
-  file2 = try_open(filename2)
-  # quit with an error if either file didn't open
-  if not file1 or not file2:
-    exit(1)
-  # match the files
-  sm = SoundMatcher()
-  result = sm.match(file1, file2)
-  # close the files
-  file1.close()
-  file2.close()
-  # output the result
-  if result:
-    print "MATCH"
-	exit(2)
-  else:
-    print "NO MATCH"
-  # exit the program
-  exit(0)
+    # check for the correct number of command line arguments
+    if len(sys.argv) != 5 or not sys.argv[1] == "-f" or not sys.argv[3] == "-f":
+        sys.stderr.write("ERROR Usage: ./p4500 -f filename1 -f filename2\n")
+        exit(1)
+    # get the filenames
+    filename1 = sys.argv[2]
+    filename2 = sys.argv[4]
+    # try to open the files
+    file1 = try_open(filename1)
+    file2 = try_open(filename2)
+    # quit with an error if either file didn't open
+    if not file1 or not file2:
+        exit(1)
+    # match the files
+    sm = SoundMatcher()
+    result = sm.match(file1, file2)
+    # close the files
+    file1.close()
+    file2.close()
+    # output the result
+    if result:
+        print "MATCH"
+    else:
+        print "NO MATCH"
+    # exit the program
+    exit(0)
 
 
 def try_open(filename):
-  try:
-    f = wave.open(filename)
-    return f
-  except IOError as e:
-    if e.errno == 2:
-      sys.stderr.write("ERROR the file "+filename+" was not found.\n")
-    else:
-      sys.stderr.write("ERROR The file "+filename+" is not a valid wave file.\n")
-  except Exception:
-    sys.stderr.write("ERROR The file "+filename+" is not a valid wave file.\n")
-    return False
+    try:
+        f = wave.open(filename)
+        return f
+    except IOError as e:
+        if e.errno == 2:
+            sys.stderr.write("ERROR the file "+filename+" was not found.\n")
+        else:
+            sys.stderr.write("ERROR The file "+filename+" is not a valid wave file.\n")
+    except Exception:
+        sys.stderr.write("ERROR The file "+filename+" is not a valid wave file.\n")
+        return False
 
 if __name__ == "__main__":
-  main()
+    main()
