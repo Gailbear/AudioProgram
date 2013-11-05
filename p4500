@@ -26,6 +26,7 @@ def main():
   # output the result
   if result:
     print "MATCH"
+	exit(2)
   else:
     print "NO MATCH"
   # exit the program
