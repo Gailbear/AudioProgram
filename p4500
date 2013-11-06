@@ -52,7 +52,6 @@ def main():
 
 def convert_wave(filename):
     outfd, outfile = tempfile.mkstemp()
-    print "temp file = %s" % outfile
     subprocess.call(["lame", "-b", "16", "-r", "-m", "m", "--decode", filename.name, outfile])
     return open(outfile)
 
