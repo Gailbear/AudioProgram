@@ -1,7 +1,9 @@
 #!/usr/bin/python
+import os
+import subprocess
 import sys
+import tempfile
 import wave
-import argparse
 from fingerprinter import *
 from soundmatcher import *
 
@@ -23,14 +25,17 @@ def main():
     if not file1 or not file2:
         exit(1)
 
+    wave1 = convert_wave(file1)
+    wave2 = convert_wave(file2)
+
     # add files to the fingerprint database
     fp = FingerPrinter()
-    fp.add_fingerprint(file1)
-    fp.add_fingerprint(file2)
+    fp.add_fingerprint(wave1)
+    fp.add_fingerprint(wave2)
 
     # match the files
     sm = SoundMatcher(fp.get_database())
-    result = sm.match(file1, file2)
+    result = sm.match(wave1, wave2)
 
     # close the files
     file1.close()
@@ -45,6 +50,11 @@ def main():
     # exit the program
     exit(0)
 
+def convert_wave(filename):
+    outfd, outfile = tempfile.mkstemp()
+    print "temp file = %s" % outfile
+    subprocess.call(["lame", "-b", "16", "-r", "-m", "m", "--decode", filename.name, outfile])
+    return open(outfile)
 
 def try_open(filename):
     try:

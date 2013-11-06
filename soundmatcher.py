@@ -31,7 +31,7 @@ class SoundMatcher(object):
             shorter = db1
             shorter_len = db1len
 
-        lowest_dist = 300000
+        threshold = 300000
 
         iters = longer_len - shorter_len + 1
 
@@ -45,7 +45,8 @@ class SoundMatcher(object):
             dist = numpy.linalg.norm(subsec - shorter)
 
             # Score this iteration
-            if dist < lowest_dist:
-                lowest_dist = dist
+            if dist < threshold:
+                # Just return immediately
+                return True
 
-        return (lowest_dist < 300000)
+        return False
