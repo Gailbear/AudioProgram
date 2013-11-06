@@ -22,6 +22,3 @@ The only problem that might happen is if the file does not have permission to be
 Fix: chmod a+x p4500
 (or whatever other permissions you want to allow it)
 
-Our program takes a VERY long time to match files of different lengths. We've created a log file in /tmp/p4500log.txt that, if you watch while the program is running, you can see that we are not hanging. However, the time is too long to be usable.
-
-Our program does do ok on files that are the same size, though. We have plans to fix this bug in our second prototype, but this requires major refactoring of our code, so we will do it when we have more time.
