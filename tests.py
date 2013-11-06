@@ -48,6 +48,9 @@ class Command(object):
         return string
 
 
+def IsValidSyntax(c):
+    output = os.system(c) == 0
+    return output
 
 def Result(f1,f2):
     cmd = [prog,"-f",f1,"-f",f2]
@@ -57,6 +60,49 @@ def Result(f1,f2):
 
 # Here's our "unit tests".
 class ResultTests(unittest.TestCase):
+
+    # Command Syntax Tests    
+    # All true
+    def test00(self):
+        self.assertTrue(IsValidSyntax(prog+" -f "+mo0+" -f "+me0))
+    def test01(self):
+        self.assertTrue(IsValidSyntax(prog+" -f "+mo1+" -f "+me1))
+    def test02(self):
+        self.assertTrue(IsValidSyntax(prog+" -f "+mo2+" -f "+me2))
+    def test03(self):
+        self.assertTrue(IsValidSyntax(prog+" -f "+mo3+" -f "+me3))
+
+    # All false
+    def test04(self):
+        self.assertFalse(IsValidSyntax(prog+" -f "+mo0))
+    def test05(self):
+        self.assertFalse(IsValidSyntax(prog+" -f "))
+    def test06(self):
+        self.assertFalse(IsValidSyntax("-f "+mo0+" -f "+me0))
+    def test08(self):
+        self.assertFalse(IsValidSyntax("-f "+" -f "+me0))
+    def test09(self):
+        self.assertFalse(IsValidSyntax("-f "+me0))
+    def test010(self):
+        self.assertFalse(IsValidSyntax("-f "+mo0+" -f "))
+    def test011(self):
+        self.assertFalse(IsValidSyntax(prog+" -f "+mo0+" -f "))
+    def test012(self):
+        self.assertFalse(IsValidSyntax(prog+" -f "+mo0+" -f "))
+    def test013(self):
+        self.assertFalse(IsValidSyntax(prog+" -a "+mo3+" -a "+me3))
+    def test014(self):
+        self.assertFalse(IsValidSyntax(prog+"-filename "+mo3+"-filename "+me3))
+    def test015(self):
+        self.assertFalse(IsValidSyntax(prog+" "+mo3+" "+me3))
+    def test016(self):
+        self.assertFalse(IsValidSyntax(prog+"f"+mo3+" -g "+me3))
+    def test017(self):
+        self.assertFalse(IsValidSyntax(" -f "+" -f "+mo3+" -f "+me3))
+    def test018(self):
+        self.assertFalse(IsValidSyntax("/p4500"+" -f "+mo3+" -f "+me3))
+
+
     # Original vs Encrypted 
     def test1(self):
         self.assertEqual(MATCH,Result(mo0,me0))
@@ -65,6 +111,7 @@ class ResultTests(unittest.TestCase):
     def test3(self):
         self.assertEqual(MATCH,Result(me0,me0))
 
+    # Original vs Orignal Extracts
     def test4(self):
         self.assertEqual(MATCH,Result(mo0,mo1))
     def test5(self):
@@ -80,22 +127,13 @@ class ResultTests(unittest.TestCase):
     def test9(self):
         self.assertEqual(MATCH,Result(mo0,me3))
 
-    # Original_0 vs Original Extracts
+    # Original_0 Extract vs Original Extracts
     def test10(self):
         self.assertEqual(MATCH,Result(mo1,mo1))
     def test11(self):
         self.assertEqual(NO_MATCH,Result(mo1,mo2))
     def test12(self):
         self.assertEqual(NO_MATCH,Result(mo1,mo3))
-
-
-    # Original vs Encrypted Extracts
-    def test13(self):
-        self.assertEqual(MATCH,Result(mo0,me1))
-    def test14(self):
-        self.assertEqual(MATCH,Result(mo0,me2))
-    def test15(self):
-        self.assertEqual(MATCH,Result(mo0,me3))
 
     # Original Extracts vs Encrypted Extracts
     def test16(self):

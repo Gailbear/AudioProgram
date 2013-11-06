@@ -1,7 +1,6 @@
 import numpy
 import operator
 import scipy.io.wavfile
-import sys
 import wave
 
 class FingerPrinter(object):
@@ -13,23 +12,16 @@ class FingerPrinter(object):
     def get_database(self):
         return self.fpdb
 
-    def add_fingerprint(self, fname):
-        print "Fingerprinting %s" % fname
+    def add_fingerprint(self, f):
+        self.fpdb[f.name] = []
 
-        self.fpdb[fname] = {}
-
-        f = wave.open(fname)
-        nsamp = f.getnframes()
-        width = f.getsampwidth()
-        rate, data = scipy.io.wavfile.read(fname)
-        print "Rate: %d" % rate
-        print "Width: %d" % width
-        print "Samples: %d" % nsamp
-        print "Data: %s" % data[0:20]
+        wf = wave.open(f)
+        nsamp = wf.getnframes()
+        width = wf.getsampwidth()
+        rate, data = scipy.io.wavfile.read(f.name)
 
         # We only want to read 32 samples per second
         skip = rate / 32
-        print "Skip = %d" % skip
 
         # Parse through the samples
         for idx in xrange(0, nsamp, skip):
@@ -38,5 +30,8 @@ class FingerPrinter(object):
             result = [abs(x) for x in numpy.fft.fft(chunk)][0:size/2]
             maxidx = self.max_idx(result)
             freq = maxidx * rate / size
-            print "Maximum intensity frequency: %f" % freq
-            self.fpdb[fname][idx] = freq
+
+            self.fpdb[f.name].append(freq)
+
+            # We'll want to keep time data in the final implementation
+            #self.fpdb[f.name][idx] = freq
