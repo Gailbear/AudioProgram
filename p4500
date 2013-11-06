@@ -52,7 +52,7 @@ def main():
 
 def convert_wave(filename):
     outfd, outfile = tempfile.mkstemp()
-    subprocess.call(["lame", "-b", "16", "-r", "-m", "m", "--decode", filename.name, outfile])
+    subprocess.call(["/course/cs4500f13/bin/lame", "-b", "16", "-r", "-m", "m", "--decode", filename.name, outfile])
     return open(outfile)
 
 def try_open(filename):
