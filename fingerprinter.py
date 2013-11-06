@@ -13,15 +13,15 @@ class FingerPrinter(object):
     def get_database(self):
         return self.fpdb
 
-    def add_fingerprint(self, fname):
-        print "Fingerprinting %s" % fname
+    def add_fingerprint(self, f):
+        print "Fingerprinting %s" % f.name
 
-        self.fpdb[fname] = {}
+        self.fpdb[f.name] = []
 
-        f = wave.open(fname)
-        nsamp = f.getnframes()
-        width = f.getsampwidth()
-        rate, data = scipy.io.wavfile.read(fname)
+        wf = wave.open(f)
+        nsamp = wf.getnframes()
+        width = wf.getsampwidth()
+        rate, data = scipy.io.wavfile.read(f.name)
         print "Rate: %d" % rate
         print "Width: %d" % width
         print "Samples: %d" % nsamp
@@ -38,5 +38,9 @@ class FingerPrinter(object):
             result = [abs(x) for x in numpy.fft.fft(chunk)][0:size/2]
             maxidx = self.max_idx(result)
             freq = maxidx * rate / size
-            print "Maximum intensity frequency: %f" % freq
-            self.fpdb[fname][idx] = freq
+            #print "Maximum intensity frequency: %f" % freq
+
+            self.fpdb[f.name].append(freq)
+
+            # We'll want to keep time data in the final implementation
+            #self.fpdb[f.name][idx] = freq

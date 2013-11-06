@@ -1,62 +1,52 @@
+import difflib
 import logging
 import numpy
 import sys
 
-# Don't judge me, it's just a prototype.
-
 class SoundMatcher(object):
+    fpdb = None
 
-    def __init__(self):
-      logging.basicConfig(filename='/tmp/p4500log.txt',level=logging.DEBUG)
+    def __init__(self, fpdb):
+        logging.basicConfig(filename="/tmp/p4500log.txt" ,level=logging.DEBUG)
+        self.fpdb = fpdb
 
     def grabframes(self, w):
         chunksize = w.getnframes()
         frames = w.readframes(chunksize)
-        chunk = numpy.fromstring(frames, dtype='uint8')
-        return chunk, len(chunk)
+        return frames, len(frames)
 
     def match(self, file1, file2):
-        f1len = file1.getnframes()
-        f2len = file2.getnframes()
+        db1 = numpy.array(self.fpdb[file1.name])
+        db1len = len(db1)
+        db2 = numpy.array(self.fpdb[file2.name])
+        db2len = len(db2)
 
-        sample_width = file1.getsampwidth()
-
-        if sample_width != file2.getsampwidth():
-            logging.error("ERROR: Input files must have same sample width (%d != %d)", sample_width, file2.getsampwidth())
-            sys.exit(-1)
-
-        # file1 is longer
-        if f1len > f2len:
-            longer = file1
-            longer_len = f1len
-            shorter = file2
-            shorter_len = f2len
+        # db1 is longer
+        if db1len > db2len:
+            longer = db1
+            longer_len = db1len
+            shorter = db2
+            shorter_len = db2len
 
         # file2 is longer, or they're equal
         else:
-            longer = file2
-            longer_len = f2len
-            shorter = file1
-            shorter_len = f1len
-
-        # Grab the frames of the shorter file
-        chunk, chunksize = self.grabframes(shorter)
-        haystack, haystacksize = self.grabframes(longer)
+            longer = db2
+            longer_len = db2len
+            shorter = db1
+            shorter_len = db1len
 
         lowest_dist = 500
 
-        iters = ((haystacksize - chunksize) / sample_width) + 1
+        iters = longer_len - shorter_len + 1
 
-        # Iterate through each possible offset of the smaller in the larger file
-        for offset in xrange(iters):
+        # Iterate through each possible offset of the smaller in the larger
+        for index in xrange(iters):
 
-            index = offset * sample_width
-
-            # Grab the frames from the larger file (at the specified offset)
-            subsec = haystack[index:chunksize+index]
+            # Grab the freqs from the larger file (at the specified offset)
+            subsec = longer[index:shorter_len+index]
 
             # Do some maths
-            dist = numpy.linalg.norm(subsec - chunk)
+            dist = numpy.linalg.norm(subsec - shorter)
 
             logging.debug("dist for index %d = %d", index, dist)
 
