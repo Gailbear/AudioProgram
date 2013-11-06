@@ -6,11 +6,6 @@ class SoundMatcher(object):
     def __init__(self, fpdb):
         self.fpdb = fpdb
 
-    def grabframes(self, w):
-        chunksize = w.getnframes()
-        frames = w.readframes(chunksize)
-        return frames, len(frames)
-
     def match(self, file1, file2):
         db1 = numpy.array(self.fpdb[file1.name])
         db1len = len(db1)
@@ -41,7 +36,7 @@ class SoundMatcher(object):
             # Grab the freqs from the larger file (at the specified offset)
             subsec = longer[index:shorter_len+index]
 
-            # Do some maths
+            # Calculate Euclidean distance
             dist = numpy.linalg.norm(subsec - shorter)
 
             # Score this iteration
