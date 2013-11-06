@@ -1,13 +1,9 @@
-import difflib
-import logging
 import numpy
-import sys
 
 class SoundMatcher(object):
     fpdb = None
 
     def __init__(self, fpdb):
-        logging.basicConfig(filename="/tmp/p4500log.txt" ,level=logging.DEBUG)
         self.fpdb = fpdb
 
     def grabframes(self, w):
@@ -35,7 +31,7 @@ class SoundMatcher(object):
             shorter = db1
             shorter_len = db1len
 
-        lowest_dist = 500
+        lowest_dist = 300000
 
         iters = longer_len - shorter_len + 1
 
@@ -48,10 +44,8 @@ class SoundMatcher(object):
             # Do some maths
             dist = numpy.linalg.norm(subsec - shorter)
 
-            logging.debug("dist for index %d = %d", index, dist)
-
             # Score this iteration
             if dist < lowest_dist:
                 lowest_dist = dist
 
-        return (lowest_dist < 500)
+        return (lowest_dist < 300000)
