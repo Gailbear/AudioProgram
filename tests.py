@@ -53,7 +53,7 @@ def IsValidSyntax(c):
     return output
 
 def Result(f1,f2):
-    cmd = [prog,"-f",f1,"-f",f2]
+    cmd = ["\""+prog+"\"","-f","\""+f1+"\"","-f","\""+f2+"\""]
     c = Command(cmd)
     output = c.run(limit)
     return output
