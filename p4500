@@ -1,4 +1,6 @@
 #!/usr/bin/python
+import itertools
+import magic
 import os
 import subprocess
 import sys
@@ -7,67 +9,148 @@ import wave
 from fingerprinter import *
 from soundmatcher import *
 
-def main():
-    # check for the correct number of command line arguments
-    if len(sys.argv) != 5 or not sys.argv[1] == "-f" or not sys.argv[3] == "-f":
-        sys.stderr.write("ERROR Usage: ./p4500 -f filename1 -f filename2\n")
-        exit(1)
+LAME_CMD = "lame"
 
-    # get the filenames
-    filename1 = sys.argv[2]
-    filename2 = sys.argv[4]
+valid_opts = ["-d", "-f"]
 
-    # try to open the files
-    file1 = try_open(filename1)
-    file2 = try_open(filename2)
+def error(msg):
+    sys.stderr.write("%s\n" % msg)
+    sys.exit(-1)
 
-    # quit with an error if either file didn't open
-    if not file1 or not file2:
-        exit(1)
+# Print usage information
+def usage():
+    error("Usage: ./p4500 -f filename1 -f filename2")
+    sys.exit(-1)
 
-    # convert the files to wave form
-    wave1 = convert_wave(file1)
-    wave2 = convert_wave(file2)
+# Verify the input file exists and is of correct type
+def verify_file(filename):
+    try:
+        # Make sure file exists
+        with open(filename) as f:
 
-    # add files to the fingerprint database
-    fp = FingerPrinter()
-    fp.add_fingerprint(wave1)
-    fp.add_fingerprint(wave2)
+            # Initialize magic header database
+            m = magic.open(magic.MAGIC_NONE)
+            m.load()
 
-    # match the files
-    sm = SoundMatcher(fp.get_database())
-    result = sm.match(wave1, wave2)
+            # Check if WAV or MP3 file
+            header = m.file(filename)
+            if not ("WAVE audio" in header or "MPEG ADTS, layer III" in header):
+                error("ERROR: File '%s' is not a WAV or MP3 file" % filename)
+                sys.exit(-1)
 
-    # close the files
-    file1.close()
-    file2.close()
+    except IOError:
+        error("ERROR: File '%s' not found" % filename)
+        sys.exit(-1)
 
-    # output the result
-    if result:
-        print "MATCH"
-    else:
-        print "NO MATCH"
+# Parse single file argument
+def parse_file(path):
+    if not os.path.isfile(path):
+        error("ERROR: Path '%s' is not a file" % path)
+        sys.exit(-1)
 
-    # exit the program
-    exit(0)
+    verify_file(path)
+
+    return [path]
+
+# Return a set of files to process given a pair of command line arguments
+def craft_set(opt, path):
+    if opt == "-f":
+        return parse_file(path)
+
+    else: # opt == "-d"
+        if not os.path.isdir(path):
+            error("ERROR: Path '%s' is not a directory" % path)
+            sys.exit(-1)
+
+        retset = []
+
+        for name in os.listdir(path):
+            retset.extend(parse_file(os.path.join(path, name)))
+
+        return retset
 
 def convert_wave(filename):
     outfd, outfile = tempfile.mkstemp()
-    subprocess.call(["/course/cs4500f13/bin/lame", "-b", "16", "-r", "-m", "m", "--decode", filename.name, outfile])
+
+    # Start LAME command line
+    command = [LAME_CMD]
+
+    # 16-bit width
+    command.extend(["-b", "16"])
+
+    # Assume input is raw PCM
+    command.extend(["-r"])
+
+    # Encode input as mono
+    command.extend(["-m", "m"])
+
+    # Decode to WAV file
+    command.extend(["--decode"])
+
+    # Input file
+    command.extend([filename])
+
+    # Output file
+    command.extend([outfile])
+
+    # Execute command
+    with open(os.devnull, "w") as fnull:
+        subprocess.call(command, stdout=fnull, stderr=fnull)
+
     return open(outfile)
 
-def try_open(filename):
-    try:
-        f = open(filename)
-        return f
-    except IOError as e:
-        if e.errno == 2:
-            sys.stderr.write("ERROR the file "+filename+" was not found.\n")
-        else:
-            sys.stderr.write("ERROR The file "+filename+" is not a valid wave file.\n")
-    except Exception:
-        sys.stderr.write("ERROR The file "+filename+" is not a valid wave file.\n")
-        return False
+# Main routine
+def main():
+    # Check for the correct number of command line arguments
+    if len(sys.argv) != 5:
+        usage()
+
+    # Get the opt arguments
+    opt1 = sys.argv[1]
+    opt2 = sys.argv[3]
+
+    # Check the proper command line options are provided
+    if not (opt1 in valid_opts and opt2 in valid_opts):
+        usage()
+
+    # Get the path arguments
+    path1 = sys.argv[2]
+    path2 = sys.argv[4]
+
+    # Craft both input sets
+    input_set1 = craft_set(opt1, path1)
+    input_set2 = craft_set(opt2, path2)
+
+    # All input files are verified, initialize the real sets
+    set1 = []
+    set2 = []
+
+    # Convert each input file to canonical WAV form
+    for filename in input_set1:
+        set1.append((filename, convert_wave(filename)))
+
+    for filename in input_set2:
+        set2.append((filename, convert_wave(filename)))
+
+    # Add files to the fingerprint database
+    fp = FingerPrinter()
+
+    for filename, wavefile in set1:
+        fp.add_fingerprint(filename, wavefile)
+
+    for filename, wavefile in set2:
+        if not fp.in_database(filename):
+            fp.add_fingerprint(filename, wavefile)
+
+    # Perform the matching operation between files
+    sm = SoundMatcher(fp.get_database())
+
+    combinations = itertools.product(set1, set2)
+    for test in combinations:
+        sm.match(test[0][0], test[1][0])
+
+    # Exit the program
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()

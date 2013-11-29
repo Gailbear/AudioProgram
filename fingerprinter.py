@@ -12,13 +12,16 @@ class FingerPrinter(object):
     def get_database(self):
         return self.fpdb
 
-    def add_fingerprint(self, f):
-        self.fpdb[f.name] = []
+    def in_database(self, filename):
+        return filename in self.fpdb
 
-        wf = wave.open(f)
+    def add_fingerprint(self, filename, wavefile):
+        self.fpdb[filename] = []
+
+        wf = wave.open(wavefile)
         nsamp = wf.getnframes()
         width = wf.getsampwidth()
-        rate, data = scipy.io.wavfile.read(f.name)
+        rate, data = scipy.io.wavfile.read(wavefile.name)
 
         # We only want to read 32 samples per second
         skip = rate / 32
@@ -27,11 +30,8 @@ class FingerPrinter(object):
         for idx in xrange(0, nsamp, skip):
             chunk = data[idx:idx+skip]
             size = len(chunk)
-            result = [abs(x) for x in numpy.fft.fft(chunk)][0:size/2]
+            result = [abs(x) for x in numpy.fft.rfft(chunk)][0:size/2]
             maxidx = self.max_idx(result)
             freq = maxidx * rate / size
 
-            self.fpdb[f.name].append(freq)
-
-            # We'll want to keep time data in the final implementation
-            #self.fpdb[f.name][idx] = freq
+            self.fpdb[filename].append(freq)
