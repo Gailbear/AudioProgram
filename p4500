@@ -19,7 +19,8 @@ def error(msg):
 
 # Print usage information
 def usage():
-    error("Usage: ./p4500 -f filename1 -f filename2")
+    error("Usage: ./p4500 -f filename -d directoryname ;\
+           either argument type can appear in either position.")
     sys.exit(-1)
 
 # Verify the input file exists and is of correct type
