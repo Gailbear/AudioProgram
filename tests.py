@@ -16,6 +16,34 @@ mo1 = cwd + '/TestFiles/music1_original_0.wav'
 mo2 = cwd + '/TestFiles/music1_original_1.wav'
 mo3 = cwd + '/TestFiles/music1_original_2.wav'
 
+
+m2o0 = cwd + '/TestFiles/music2_original.wav'
+m2o1 = cwd + '/TestFiles/music2_original_0.wav'
+m2o2 = cwd + '/TestFiles/music2_original_1.wav'
+
+m2e0 = cwd + '/TestFiles/music2_encrypted.wav'
+m2e1 = cwd + '/TestFiles/music2_encrypted_0.wav'
+m2e2 = cwd + '/TestFiles/music2_encrypted_1.wav'
+
+
+m3o0 = cwd + '/TestFiles/music3_original.wav'
+m3o1 = cwd + '/TestFiles/music3_original_0.wav'
+m3o2 = cwd + '/TestFiles/music3_original_1.wav'
+
+m3e0 = cwd + '/TestFiles/music3_encrypted.wav'
+m3e1 = cwd + '/TestFiles/music3_encrypted_0.wav'
+m3e2 = cwd + '/TestFiles/music3_encrypted_1.wav'
+
+
+m4o0 = cwd + '/TestFiles/music4_original.wav'
+m4o1 = cwd + '/TestFiles/music4_original_0.wav'
+m4o2 = cwd + '/TestFiles/music4_original_1.wav'
+
+m4e0 = cwd + '/TestFiles/music4_encrypted.wav'
+m4e1 = cwd + '/TestFiles/music4_encrypted_0.wav'
+m4e2 = cwd + '/TestFiles/music4_encrypted_1.wav'
+
+
 limit = 2.5
 
 MATCH = "MATCH\n"
@@ -158,6 +186,127 @@ class ResultTests(unittest.TestCase):
     def test24(self):
         self.assertEqual(MATCH,Result(me0,mo3))
 
+    # test music2
+    #files full vs encrypted full
+    def test25(self):
+        self.assertEqual(MATCH,Result(m2o0,m2e0))
+		
+    # test music2 original full vs original segments
+    def test26(self):
+        self.assertEqual(MATCH,Result(m2o0,m2o1))
+    def test27(self):
+        self.assertEqual(MATCH,Result(m2o0,m2o2))
+		
+    # test music2 encrypted full vs encrypted segments
+    def test28(self):
+        self.assertEqual(MATCH,Result(m2e0,m2e1))
+    def test29(self):
+        self.assertEqual(MATCH,Result(m2e0,m2e2))
+		
+    # test music2 original segments vs encrypted segments
+    def test30(self):
+        self.assertEqual(MATCH,Result(m2o1,m2e1))
+    def test31(self):
+        self.assertEqual(MATCH,Result(m2o2,m2e2))
+    def test32(self):
+        self.assertEqual(NO_MATCH,Result(m2o1,m2e2))
+    def test33(self):
+        self.assertEqual(NO_MATCH,Result(m2o2,m2e1))		
+		
+    # test music2 original full vs encrypted segments
+    def test34(self):
+        self.assertEqual(MATCH,Result(m2o0,m2e1))
+    def test35(self):
+        self.assertEqual(MATCH,Result(m2o0,m2e2))
+		
+    # test music2 encrypted full vs original segments
+    def test36(self):
+        self.assertEqual(MATCH,Result(m2e0,m2o1))
+    def test37(self):
+        self.assertEqual(MATCH,Result(m2e0,m2o2))
+		
+	
+    # test music3
+    #files full vs encrypted full
+    def test38(self):
+        self.assertEqual(MATCH,Result(m3o0,m3e0))
+		
+    # test music3 original full vs original segments
+    def test39(self):
+        self.assertEqual(MATCH,Result(m3o0,m3o1))
+    def test40(self):
+        self.assertEqual(MATCH,Result(m3o0,m3o2))
+		
+    # test music3 encrypted full vs encrypted segments
+    def test41(self):
+        self.assertEqual(MATCH,Result(m3e0,m3e1))
+    def test42(self):
+        self.assertEqual(MATCH,Result(m3e0,m3e2))
+		
+    # test music3 original segments vs encrypted segments
+    def test43(self):
+        self.assertEqual(MATCH,Result(m3o1,m3e1))
+    def test44(self):
+        self.assertEqual(MATCH,Result(m3o2,m3e2))
+    def test45(self):
+        self.assertEqual(NO_MATCH,Result(m3o1,m3e2))
+    def test46(self):
+        self.assertEqual(NO_MATCH,Result(m3o2,m3e1))		
+		
+    # test music3 original full vs encrypted segments
+    def test47(self):
+        self.assertEqual(MATCH,Result(m3o0,m3e1))
+    def test48(self):
+        self.assertEqual(MATCH,Result(m3o0,m3e2))
+		
+    # test music3 encrypted full vs original segments
+    def test49(self):
+        self.assertEqual(MATCH,Result(m3e0,m3o1))
+    def test50(self):
+        self.assertEqual(MATCH,Result(m3e0,m3o2))
+		
+		
+	
+    # test music4
+    #files full vs encrypted full
+    def test51(self):
+        self.assertEqual(MATCH,Result(m4o0,m4e0))
+		
+    # test music4 original full vs original segments
+    def test52(self):
+        self.assertEqual(MATCH,Result(m4o0,m4o1))
+    def test53(self):
+        self.assertEqual(MATCH,Result(m4o0,m4o2))
+		
+    # test music4 encrypted full vs encrypted segments
+    def test54(self):
+        self.assertEqual(MATCH,Result(m4e0,m4e1))
+    def test55(self):
+        self.assertEqual(MATCH,Result(m4e0,m4e2))
+		
+    # test music4 original segments vs encrypted segments
+    def test56(self):
+        self.assertEqual(MATCH,Result(m4o1,m4e1))
+    def test57(self):
+        self.assertEqual(MATCH,Result(m4o2,m4e2))
+    def test58(self):
+        self.assertEqual(NO_MATCH,Result(m4o1,m4e2))
+    def test59(self):
+        self.assertEqual(NO_MATCH,Result(m4o2,m4e1))		
+		
+    # test music4 original full vs encrypted segments
+    def test60(self):
+        self.assertEqual(MATCH,Result(m4o0,m4e1))
+    def test61(self):
+        self.assertEqual(MATCH,Result(m4o0,m4e2))
+		
+    # test music4 encrypted full vs original segments
+    def test62(self):
+        self.assertEqual(MATCH,Result(m4e0,m4o1))
+    def test63(self):
+        self.assertEqual(MATCH,Result(m4e0,m4o2))
+		
+		
 
 def main():
     unittest.main()
