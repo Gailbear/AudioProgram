@@ -43,7 +43,7 @@ m4e0 = cwd + '/TestFiles/music4_encrypted.wav'
 m4e1 = cwd + '/TestFiles/music4_encrypted_0.wav'
 m4e2 = cwd + '/TestFiles/music4_encrypted_1.wav'
 
-dir1 = cwd + '/TestFiles'
+dir1 = cwd + '/TestFiles/'
 
 
 limit = 10
@@ -86,83 +86,100 @@ def Result(f1,f2):
     cmd = [prog,"-f",f1,"-f",f2]
     c = Command(cmd)
     output = c.run(limit)
-    return output
+    if "NO MATCH" in output:
+        return NO_MATCH
+    elif "MATCH" in output:
+        return MATCH
+    else:
+        return NO_MATCH
 
 def ResultDir(d1,d2):
     cmd [prog,"-d",d1,"-d",d2]
     c = Command(cmd)
     output = c.run(limit)
-    return output
+    if "NO MATCH" in output:
+        return NO_MATCH
+    elif "MATCH" in output:
+        return MATCH
+    else:
+        return NO_MATCH
+
 
 # Here's our "unit tests".
 class ResultTests(unittest.TestCase):
 
     # Command Syntax Tests    
     # All true
-    def test00(self):
+    def test000(self):
         self.assertTrue(IsValidSyntax(prog+" -f "+mo0+" -f "+me0))
-    def test01(self):
+    def test001(self):
         self.assertTrue(IsValidSyntax(prog+" -f "+mo1+" -f "+me1))
-    def test02(self):
+    def test002(self):
         self.assertTrue(IsValidSyntax(prog+" -f "+mo2+" -f "+me2))
-    def test03(self):
+    def test003(self):
         self.assertTrue(IsValidSyntax(prog+" -f "+mo3+" -f "+me3))
+    def test0031(self):
+        self.assertTrue(IsValidSyntax(prog+" -d "+dir1+" -d "+dir1))
+    def test0032(self):
+        self.assertTrue(IsValidSyntax(prog+" -f "+mo1+" -d "+dir1))
+    def test0032(self):
+        self.assertTrue(IsValidSyntax(prog+" -d "+dir1" -f "+mo1))
 
     # All false
-    def test04(self):
+    def test004(self):
         self.assertFalse(IsValidSyntax(prog+" -f "+mo0))
-    def test05(self):
+    def test005(self):
         self.assertFalse(IsValidSyntax(prog+" -f "))
-    def test06(self):
+    def test006(self):
         self.assertFalse(IsValidSyntax("-f "+mo0+" -f "+me0))
-    def test08(self):
+    def test008(self):
         self.assertFalse(IsValidSyntax("-f "+" -f "+me0))
-    def test09(self):
+    def test009(self):
         self.assertFalse(IsValidSyntax("-f "+me0))
-    def test010(self):
+    def test0010(self):
         self.assertFalse(IsValidSyntax("-f "+mo0+" -f "))
-    def test011(self):
+    def test0011(self):
         self.assertFalse(IsValidSyntax(prog+" -f "+mo0+" -f "))
-    def test012(self):
+    def test0012(self):
         self.assertFalse(IsValidSyntax(prog+" -f "+mo0+" -f "))
-    def test013(self):
+    def test0013(self):
         self.assertFalse(IsValidSyntax(prog+" -a "+mo3+" -a "+me3))
-    def test014(self):
+    def test0014(self):
         self.assertFalse(IsValidSyntax(prog+"-filename "+mo3+"-filename "+me3))
-    def test015(self):
+    def test0015(self):
         self.assertFalse(IsValidSyntax(prog+" "+mo3+" "+me3))
-    def test016(self):
+    def test0016(self):
         self.assertFalse(IsValidSyntax(prog+"f"+mo3+" -g "+me3))
-    def test017(self):
+    def test0017(self):
         self.assertFalse(IsValidSyntax(" -f "+" -f "+mo3+" -f "+me3))
-    def test018(self):
+    def test0018(self):
         self.assertFalse(IsValidSyntax("/p4500"+" -f "+mo3+" -f "+me3))
 
 
 
 
     # Original vs Encrypted 
-    def test1(self):
+    def test01(self):
         self.assertEqual(MATCH,Result(mo0,me0))
-    def test2(self):
+    def test02(self):
         self.assertEqual(MATCH,Result(mo0,mo0))
-    def test3(self):
+    def test03(self):
         self.assertEqual(MATCH,Result(me0,me0))
 
     # Original vs Orignal Extracts
-    def test4(self):
+    def test04(self):
         self.assertEqual(MATCH,Result(mo0,mo1))
-    def test5(self):
+    def test05(self):
         self.assertEqual(MATCH,Result(mo0,mo2))
-    def test6(self):
+    def test06(self):
         self.assertEqual(MATCH,Result(mo0,mo3))
 
     # Original vs Extracts
-    def test7(self):
+    def test07(self):
         self.assertEqual(MATCH,Result(mo0,me1))
-    def test8(self):
+    def test08(self):
         self.assertEqual(MATCH,Result(mo0,me2))
-    def test9(self):
+    def test09(self):
         self.assertEqual(MATCH,Result(mo0,me3))
 
     # Original_0 Extract vs Original Extracts
@@ -315,8 +332,6 @@ class ResultTests(unittest.TestCase):
         self.assertEqual(MATCH,Result(m4e0,m4o1))
     def test63(self):
         self.assertEqual(MATCH,Result(m4e0,m4o2))
-		
-
 
 		
 
