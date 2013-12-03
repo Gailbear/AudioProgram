@@ -36,6 +36,7 @@ class SoundMatcher(object):
         threshold = shorter_len * THRESH
 
         iters = longer_len - shorter_len + 1
+        mindist = 9999999999999999999999999999999
 
         # Iterate through each possible offset of the smaller in the larger
         for index in xrange(iters):
@@ -49,8 +50,14 @@ class SoundMatcher(object):
             #print "Dist @ index %d: %d" % (index, dist)
 
             # Score this iteration
+            name1 = os.path.basename(shorter_name)
+            name2 = os.path.basename(longer_name)
             if dist < threshold:
-                name1 = os.path.basename(shorter_name)
-                name2 = os.path.basename(longer_name)
                 print "MATCH %s %s" % (name1, name2)
                 return
+            if dist < mindist:
+                mindist = dist
+
+        print "NO MATCH %s %s %d" % (name1, name2, mindist)
+        return
+

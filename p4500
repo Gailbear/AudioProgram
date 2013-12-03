@@ -9,7 +9,9 @@ import wave
 from fingerprinter import *
 from soundmatcher import *
 
-LAME_CMD = "lame"
+LAME_CMD = "/course/cs4500wc/bin/lame"
+
+CWD = os.getcwd()
 
 valid_opts = ["-d", "-f"]
 
@@ -96,7 +98,7 @@ def convert_wave(filename):
 
     # Execute command
     with open(os.devnull, "w") as fnull:
-        subprocess.call(command, stdout=fnull, stderr=fnull)
+        subprocess.call(command, stdout=fnull, stderr=fnull, cwd=CWD)
 
     return open(outfile)
 
