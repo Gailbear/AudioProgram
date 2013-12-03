@@ -43,8 +43,10 @@ m4e0 = cwd + '/TestFiles/music4_encrypted.wav'
 m4e1 = cwd + '/TestFiles/music4_encrypted_0.wav'
 m4e2 = cwd + '/TestFiles/music4_encrypted_1.wav'
 
+dir1 = cwd + '/TestFiles'
 
-limit = 2.5
+
+limit = 10
 
 MATCH = "MATCH\n"
 NO_MATCH = "NO MATCH\n"
@@ -81,7 +83,13 @@ def IsValidSyntax(c):
     return output
 
 def Result(f1,f2):
-    cmd = ["\""+prog+"\"","-f","\""+f1+"\"","-f","\""+f2+"\""]
+    cmd = [prog,"-f",f1,"-f",f2]
+    c = Command(cmd)
+    output = c.run(limit)
+    return output
+
+def ResultDir(d1,d2):
+    cmd [prog,"-d",d1,"-d",d2]
     c = Command(cmd)
     output = c.run(limit)
     return output
@@ -129,6 +137,8 @@ class ResultTests(unittest.TestCase):
         self.assertFalse(IsValidSyntax(" -f "+" -f "+mo3+" -f "+me3))
     def test018(self):
         self.assertFalse(IsValidSyntax("/p4500"+" -f "+mo3+" -f "+me3))
+
+
 
 
     # Original vs Encrypted 
@@ -306,6 +316,8 @@ class ResultTests(unittest.TestCase):
     def test63(self):
         self.assertEqual(MATCH,Result(m4e0,m4o2))
 		
+
+
 		
 
 def main():
