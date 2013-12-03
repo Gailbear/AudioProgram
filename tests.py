@@ -123,7 +123,7 @@ class ResultTests(unittest.TestCase):
     def test0032(self):
         self.assertTrue(IsValidSyntax(prog+" -f "+mo1+" -d "+dir1))
     def test0032(self):
-        self.assertTrue(IsValidSyntax(prog+" -d "+dir1" -f "+mo1))
+        self.assertTrue(IsValidSyntax(prog+" -d "+dir1+" -f "+mo1))
 
     # All false
     def test004(self):
