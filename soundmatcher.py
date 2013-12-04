@@ -2,7 +2,8 @@ from __future__ import division
 import numpy
 import os
 
-THRESH = 10
+THRESH = 40
+diff_thresh = 20
 
 class SoundMatcher(object):
     fpdb = None
@@ -40,6 +41,7 @@ class SoundMatcher(object):
 
         iters = longer_len - shorter_len + 1
         mindist = 9999999999999999999999999999999
+        maxpctmatch = 0
 
         name1 = os.path.basename(shorter_name)
         name2 = os.path.basename(longer_name)
@@ -49,16 +51,19 @@ class SoundMatcher(object):
         for index in xrange(iters):
             dist = abs(ss-ssub)
             if dist < threshold:
-                #subsec = longer[index:shorter_len + index]
-                #diffs = map(lambda x, y : abs(x - y),shorter, subsec)
-                #belows = filter(lambda x: x < THRESH, diffs)
-                #if len(belows)/len(diffs) > 0.1:
-                print "MATCH %s %s %d" % (name1, name2, dist)
+                #doesn't work
+                match = map(lambda x,y: x == y,shorter, longer[index:shorter_len+index])
+                match = filter(lambda x: x, match)
+                ratio = float(len(match))/shorter_len
+                if ratio > maxpctmatch:
+                  maxpctmatch = ratio
+                #if ratio > .3:
+                print "MATCH %s %s (%d, %d%%)" % (name1, name2, dist, ratio * 100)
                 return
             if dist < mindist:
               mindist = dist
             ss = ss - longer[index] + longer[shorter_len + index -1]
-        print "NO MATCH %s %s %d " % (name1, name2, mindist)
+        print "NO MATCH %s %s (%d, %d%%)" % (name1, name2, mindist, maxpctmatch * 100)
         return
 
 
