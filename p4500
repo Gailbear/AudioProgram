@@ -150,7 +150,7 @@ def main():
 
     combinations = itertools.product(set1, set2)
     for test in combinations:
-        sm.match(test[0][0], test[1][0])
+        sm.match(test[0], test[1])
 
     # Exit the program
     sys.exit(0)
