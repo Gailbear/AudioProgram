@@ -1,7 +1,7 @@
 import numpy
 import os
 
-THRESH = 1
+THRESH = 10
 
 class SoundMatcher(object):
     fpdb = None
@@ -33,10 +33,29 @@ class SoundMatcher(object):
             shorter_len = db1len
             shorter_name = filename1
 
-        threshold = shorter_len * THRESH
+
+
+        threshold = 10 * shorter_len
 
         iters = longer_len - shorter_len + 1
         mindist = 9999999999999999999999999999999
+
+        name1 = os.path.basename(shorter_name)
+        name2 = os.path.basename(longer_name)
+        # Attempt at rabin karp
+        ssub = sum(shorter)
+        ss = sum(longer[:shorter_len])
+        for index in xrange(iters):
+            dist = abs(ss-ssub)
+            if dist < shorter_len:
+                print "MATCH %s %s %d" % (name1, name2, dist)
+                return
+            if dist < mindist:
+              mindist = dist
+            ss = ss - longer[index] + longer[shorter_len + index -1]
+        print "NO MATCH %s %s %d " % (name1, name2, mindist)
+        return
+
 
         # Iterate through each possible offset of the smaller in the larger
         for index in xrange(iters):
