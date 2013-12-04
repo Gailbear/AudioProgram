@@ -1,3 +1,4 @@
+from __future__ import division
 import numpy
 import os
 
@@ -35,7 +36,7 @@ class SoundMatcher(object):
 
 
 
-        threshold = 10 * shorter_len
+        threshold = THRESH * shorter_len
 
         iters = longer_len - shorter_len + 1
         mindist = 9999999999999999999999999999999
@@ -47,7 +48,11 @@ class SoundMatcher(object):
         ss = sum(longer[:shorter_len])
         for index in xrange(iters):
             dist = abs(ss-ssub)
-            if dist < shorter_len:
+            if dist < threshold:
+                #subsec = longer[index:shorter_len + index]
+                #diffs = map(lambda x, y : abs(x - y),shorter, subsec)
+                #belows = filter(lambda x: x < THRESH, diffs)
+                #if len(belows)/len(diffs) > 0.1:
                 print "MATCH %s %s %d" % (name1, name2, dist)
                 return
             if dist < mindist:
