@@ -29,7 +29,7 @@ class SoundMatcher(object):
         
         threshold = chunksize * diff_thresh
 
-        print "dist %f; threshold %d" % (dist, threshold)
+#        print "dist %f; threshold %d" % (dist, threshold)
         return dist < threshold, dist, threshold
 
 

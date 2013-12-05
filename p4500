@@ -9,8 +9,7 @@ import wave
 from fingerprinter import *
 from soundmatcher import *
 
-#LAME_CMD = "/course/cs4500f13/bin/lame"
-LAME_CMD = "lame"
+LAME_CMD = "/course/cs4500f13/bin/lame"
 
 CWD = os.getcwd()
 
