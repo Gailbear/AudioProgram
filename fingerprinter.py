@@ -1,3 +1,4 @@
+import math
 import numpy
 import operator
 import scipy.io.wavfile
@@ -30,7 +31,8 @@ class FingerPrinter(object):
         for idx in xrange(0, nsamp, skip):
             chunk = data[idx:idx+skip]
             size = len(chunk)
-            result = [abs(x) for x in numpy.fft.rfft(chunk)][0:size/2]
+            end = int(math.ceil(size/2.0))
+            result = [abs(x) for x in numpy.fft.rfft(chunk)][0:end]
             maxidx = self.max_idx(result)
             freq = maxidx * rate / size
 
