@@ -4,8 +4,8 @@ import os
 import wave
 from collections import Counter
 
-THRESH = 30 
-diff_thresh = .6
+THRESH = 5
+diff_thresh = 1
 
 class SoundMatcher(object):
     fpdb = None
@@ -29,8 +29,27 @@ class SoundMatcher(object):
         
         threshold = chunksize * diff_thresh
 
-        print "dist %f; threshold %d" % (dist, threshold)
+        #print "dist %f; threshold %d" % (dist, threshold)
         return dist < threshold, dist, threshold
+
+
+    def rabin_karp(self, shorter, longer, shorter_len, iters):
+        threshold = THRESH * shorter_len
+
+        mindist = 9999999999999999999999999999999
+        
+        # Attempt at rabin karp
+        ssub = sum(shorter)
+        ss = sum(longer[0:shorter_len])
+
+        for index in xrange(iters):
+            dist = abs(ss-ssub)
+            if dist < threshold:
+                return True
+            if dist < mindist:
+              mindist = dist
+            ss = ss - longer[index] + longer[shorter_len + index -1]
+        return False
 
 
     def match(self, file1, file2):
@@ -70,32 +89,30 @@ class SoundMatcher(object):
         threshold = THRESH * shorter_len
 
         iters = longer_len - shorter_len + 1
-        mindist = 9999999999999999999999999999999
         mindist2 = 99999999999999999999999999999
         thresh2 = 0
         maxpctmatch = 0
 
         name1 = os.path.basename(shorter_name)
         name2 = os.path.basename(longer_name)
+
+
+        if not self.rabin_karp(shorter, longer, shorter_len, iters):
+          print "NO MATCH %s %s" % (name1, name2)
+          return
         
-        # Attempt at rabin karp
-        ssub = sum(shorter)
-        ss = sum(longer[0:shorter_len])
 
         for index in xrange(iters):
-            dist = abs(ss-ssub)
-            if dist < threshold:
+            if not longer_wave:
                 longer_wave = wave.open(longer_file.name, "r")
+            if not shorter_wave:
                 shorter_wave = wave.open(shorter_file.name, "r")
-                confirm, d, t = self.confirm_match(shorter_wave, longer_wave, index)
-                if confirm:
-                    print "MATCH %s %s (index %d; dist %f; threshold %d)" % (name1, name2, index, d, t)
-                    return
-                if d < mindist2:
-                  mindist2 = d
-                  thresh2 = t
-            if dist < mindist:
-              mindist = dist
-            ss = ss - longer[index] + longer[shorter_len + index -1]
-        print "NO MATCH %s %s (%d, %f, %d)" % (name1, name2, mindist, mindist2, thresh2)
+            confirm, d, t = self.confirm_match(shorter_wave, longer_wave, index)
+            if confirm:
+                print "MATCH %s %s (index %d; dist: %d; thresh: %d)" % (name1, name2, index, d, t) 
+                return
+            if d < mindist2:
+                mindist2 = d
+                thresh2 = t
+        print "NO MATCH %s %s (%d)" % (name1, name2, mindist2)
         return
