@@ -37,9 +37,13 @@ def verify_file(filename):
 
             # Check if WAV or MP3 file
             header = m.file(filename)
-            if not ("WAVE audio" in header or "MPEG ADTS, layer III" in header):
-                error("ERROR: File '%s' is not a WAV or MP3 file" % filename)
-                sys.exit(-1)
+            if("WAVE audio" in header):
+                return "WAV"
+            if ("MPEG ADTS, layer III" in header or "ID3 version" in header):
+                return "MP3"
+            
+            error("ERROR: File '%s' is not a WAV or MP3 file" % filename)
+            sys.exit(-1)
 
     except IOError:
         error("ERROR: File '%s' not found" % filename)
@@ -51,7 +55,7 @@ def parse_file(path):
         error("ERROR: Path '%s' is not a file" % path)
         sys.exit(-1)
 
-    verify_file(path)
+    #verify_file(path)
 
     return [path]
 
@@ -74,21 +78,28 @@ def craft_set(opt, path):
 
 def convert_wave(filename):
     outfd, outfile = tempfile.mkstemp()
-
+    
+    return open(filename)
+    
+    file_type = verify_file(filename)
+    
     # Start LAME command line
     command = [LAME_CMD]
+    
+    # Encode input as mono
+    command.extend(["-m", "m"])
+    
+    # DO SPECIFIC MP3 AND WAVE DECODING HERE
+    #if file_type == "MP3":
+    #if file_type == "WAVE":
 
     # 16-bit width
     command.extend(["-b", "16"])
-
-    # Assume input is raw PCM
-    command.extend(["-r"])
-
-    # Encode input as mono
-    command.extend(["-m", "m"])
-
-    # Decode to WAV file
+    
     command.extend(["--decode"])
+
+    # Resample
+    command.extend(["--resample", "16"])
 
     # Input file
     command.extend([filename])

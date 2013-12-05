@@ -2,9 +2,10 @@ from __future__ import division
 import numpy
 import os
 import wave
+from collections import Counter
 
-THRESH = 50
-diff_thresh = .28
+THRESH = 100
+diff_thresh = .5
 
 class SoundMatcher(object):
     fpdb = None
@@ -23,7 +24,7 @@ class SoundMatcher(object):
         frames = longer.readframes(chunksize)
         subsec = numpy.fromiter((ord(c) for c in frames), int, count=len(frames))
 
-        # Do some maths
+        # Calculate Euclidean distance
         dist = numpy.linalg.norm(subsec - chunk)
         
         threshold = chunksize * diff_thresh
@@ -74,6 +75,7 @@ class SoundMatcher(object):
 
         name1 = os.path.basename(shorter_name)
         name2 = os.path.basename(longer_name)
+        
         # Attempt at rabin karp
         ssub = sum(shorter)
         ss = sum(longer[0:shorter_len])
@@ -81,51 +83,14 @@ class SoundMatcher(object):
         for index in xrange(iters):
             dist = abs(ss-ssub)
             if dist < threshold:
-                if not longer_wave:
-                    longer_wave = wave.open(longer_name, "r")
-                if not shorter_wave:
-                    shorter_wave = wave.open(shorter_name, "r")
-                if self.confirm_match(shorter_wave, longer_wave, index):
+                longer_wave = wave.open(longer_file.name, "r")
+                shorter_wave = wave.open(shorter_file.name, "r")
+                confirm = self.confirm_match(shorter_wave, longer_wave, index)
+                if confirm:
                     print "MATCH %s %s (index %d)" % (name1, name2, index)
                     return
-        #doesn't work
-        #match = map(lambda x,y: abs(x-y)<100,shorter, longer[index:shorter_len+index])
-        #if index == 0:
-        #   print match[0:100]
-                #match = filter(lambda x: x, match)
-                #ratio = float(len(match))/shorter_len
-                #if ratio > maxpctmatch:
-                #  maxpctmatch = ratio
-                #if ratio > .3:
-                #   print "MATCH %s %s (index %d, dist %d, %d%%)" % (name1, name2, index, dist, ratio * 100)
-                #   return
             if dist < mindist:
               mindist = dist
             ss = ss - longer[index] + longer[shorter_len + index -1]
         print "NO MATCH %s %s (%d)" % (name1, name2, mindist)
         return
-
-
-        # Iterate through each possible offset of the smaller in the larger
-        for index in xrange(iters):
-
-            # Grab the freqs from the larger file (at the specified offset)
-            subsec = longer[index:shorter_len+index]
-
-            # Calculate Euclidean distance
-            dist = numpy.linalg.norm(subsec - shorter)
-
-            #print "Dist @ index %d: %d" % (index, dist)
-
-            # Score this iteration
-            name1 = os.path.basename(shorter_name)
-            name2 = os.path.basename(longer_name)
-            if dist < threshold:
-                print "MATCH %s %s" % (name1, name2)
-                return
-            if dist < mindist:
-                mindist = dist
-
-        print "NO MATCH %s %s %d" % (name1, name2, mindist)
-        return
-
