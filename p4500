@@ -163,7 +163,21 @@ def main():
         if not fp.in_database(filename):
             fp.add_fingerprint(filename, wavefile)
 
+
+    #printing some fp stuff 
+    #fpdb = fp.get_database()
+    #for filename in input_set1:
+      #print "%s: " % filename,
+      #print fpdb[filename]
+
+    #for filename in input_set2:
+      #print "%s: " % filename,
+      #print fpdb[filename]
+
+    #sys.exit(0)
+
     # Perform the matching operation between files
+
     sm = SoundMatcher(fp.get_database())
 
     combinations = itertools.product(set1, set2)
