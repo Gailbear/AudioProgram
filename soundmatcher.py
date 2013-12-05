@@ -4,8 +4,8 @@ import os
 import wave
 from collections import Counter
 
-THRESH = 100
-diff_thresh = .5
+THRESH = 30 
+diff_thresh = .6
 
 class SoundMatcher(object):
     fpdb = None
@@ -29,8 +29,8 @@ class SoundMatcher(object):
         
         threshold = chunksize * diff_thresh
 
-        #print "dist %f; threshold %d" % (dist, threshold)
-        return dist < threshold
+        print "dist %f; threshold %d" % (dist, threshold)
+        return dist < threshold, dist, threshold
 
 
     def match(self, file1, file2):
@@ -71,6 +71,8 @@ class SoundMatcher(object):
 
         iters = longer_len - shorter_len + 1
         mindist = 9999999999999999999999999999999
+        mindist2 = 99999999999999999999999999999
+        thresh2 = 0
         maxpctmatch = 0
 
         name1 = os.path.basename(shorter_name)
@@ -85,12 +87,15 @@ class SoundMatcher(object):
             if dist < threshold:
                 longer_wave = wave.open(longer_file.name, "r")
                 shorter_wave = wave.open(shorter_file.name, "r")
-                confirm = self.confirm_match(shorter_wave, longer_wave, index)
+                confirm, d, t = self.confirm_match(shorter_wave, longer_wave, index)
                 if confirm:
-                    print "MATCH %s %s (index %d)" % (name1, name2, index)
+                    print "MATCH %s %s (index %d; dist %f; threshold %d)" % (name1, name2, index, d, t)
                     return
+                if d < mindist2:
+                  mindist2 = d
+                  thresh2 = t
             if dist < mindist:
               mindist = dist
             ss = ss - longer[index] + longer[shorter_len + index -1]
-        print "NO MATCH %s %s (%d)" % (name1, name2, mindist)
+        print "NO MATCH %s %s (%d, %f, %d)" % (name1, name2, mindist, mindist2, thresh2)
         return

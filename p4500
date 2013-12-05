@@ -9,7 +9,7 @@ import wave
 from fingerprinter import *
 from soundmatcher import *
 
-LAME_CMD = "/course/cs4500wc/bin/lame"
+LAME_CMD = "/course/cs4500f13/bin/lame"
 
 CWD = os.getcwd()
 
@@ -79,12 +79,13 @@ def craft_set(opt, path):
 def convert_wave(filename):
     outfd, outfile = tempfile.mkstemp()
     
-    return open(filename)
-    
     file_type = verify_file(filename)
     
     # Start LAME command line
     command = [LAME_CMD]
+    command2 = [LAME_CMD]
+    tfd, tfile = tempfile.mkstemp()
+
     
     # Encode input as mono
     command.extend(["-m", "m"])
@@ -96,20 +97,26 @@ def convert_wave(filename):
     # 16-bit width
     command.extend(["-b", "16"])
     
-    command.extend(["--decode"])
+    command2.extend(["--decode"])
 
     # Resample
-    command.extend(["--resample", "16"])
+    command.extend(["--resample", "8"])
+
+    # mp3input
+    command2.extend(["--mp3input"])
 
     # Input file
     command.extend([filename])
+    command2.extend([tfile])
 
     # Output file
-    command.extend([outfile])
+    command.extend([tfile])
+    command2.extend([outfile])
 
     # Execute command
     with open(os.devnull, "w") as fnull:
         subprocess.call(command, stdout=fnull, stderr=fnull, cwd=CWD)
+        subprocess.call(command2, stdout=fnull, stderr=fnull, cwd=CWD)
 
     return open(outfile)
 
