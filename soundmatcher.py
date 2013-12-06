@@ -102,17 +102,5 @@ class SoundMatcher(object):
           return
         
 
-        for index in xrange(iters):
-            if not longer_wave:
-                longer_wave = wave.open(longer_file.name, "r")
-            if not shorter_wave:
-                shorter_wave = wave.open(shorter_file.name, "r")
-            confirm, d, t = self.confirm_match(shorter_wave, longer_wave, index)
-            if confirm:
-                print "MATCH %s %s (index %d; dist: %d; thresh: %d)" % (name1, name2, index, d, t) 
-                return
-            if d < mindist2:
-                mindist2 = d
-                thresh2 = t
-        print "NO MATCH %s %s (%d)" % (name1, name2, mindist2)
+        print "MATCH %s %s" % (name1, name2)
         return
