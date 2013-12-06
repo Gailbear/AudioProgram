@@ -26,7 +26,7 @@ class SoundMatcher(object):
 
         # Calculate Euclidean distance
         dist = numpy.linalg.norm(subsec - chunk)
-        
+
         threshold = chunksize * diff_thresh
 
 #        print "dist %f; threshold %d" % (dist, threshold)
@@ -36,8 +36,6 @@ class SoundMatcher(object):
     def rabin_karp(self, shorter, longer, shorter_len, iters):
         threshold = THRESH * shorter_len
 
-        mindist = 9999999999999999999999999999999
-        
         # Attempt at rabin karp
         ssub = sum(shorter)
         ss = sum(longer[0:shorter_len])
@@ -46,8 +44,6 @@ class SoundMatcher(object):
             dist = abs(ss-ssub)
             if dist < threshold:
                 return True
-            if dist < mindist:
-              mindist = dist
             ss = ss - longer[index] + longer[shorter_len + index -1]
         return False
 

@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import warnings
 import wave
 from fingerprinter import *
 from soundmatcher import *
@@ -77,6 +78,9 @@ def craft_set(opt, path):
         return retset
 
 def convert_wave(filename):
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        inln = os.tmpnam()
     outfd, outfile = tempfile.mkstemp()
     
     file_type = verify_file(filename)
@@ -105,8 +109,11 @@ def convert_wave(filename):
     # mp3input
     command2.extend(["--mp3input"])
 
+    # Temporary symlink to ignore source file extension
+    os.symlink(os.path.join(CWD, filename), inln)
+
     # Input file
-    command.extend([filename])
+    command.extend([inln])
     command2.extend([tfile])
 
     # Output file
@@ -117,6 +124,9 @@ def convert_wave(filename):
     with open(os.devnull, "w") as fnull:
         subprocess.call(command, stdout=fnull, stderr=fnull, cwd=CWD)
         subprocess.call(command2, stdout=fnull, stderr=fnull, cwd=CWD)
+
+    # Remove the temporary symlink
+    os.unlink(inln)
 
     return open(outfile)
 
