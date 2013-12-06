@@ -5,33 +5,12 @@ import wave
 from collections import Counter
 
 THRESH = 5
-diff_thresh = 1
 
 class SoundMatcher(object):
     fpdb = None
 
     def __init__(self, fpdb):
         self.fpdb = fpdb
-
-    def confirm_match(self, shorter, longer, index):
-        # Grab the frames of the shorter file
-        chunksize = shorter.getnframes()
-        frames = shorter.readframes(chunksize)
-        chunk = numpy.fromiter((ord(c) for c in frames), int, count=len(frames))
-
-        # Grab the frames from the larger file (at the specified offset)
-        longer.setpos(index)
-        frames = longer.readframes(chunksize)
-        subsec = numpy.fromiter((ord(c) for c in frames), int, count=len(frames))
-
-        # Calculate Euclidean distance
-        dist = numpy.linalg.norm(subsec - chunk)
-
-        threshold = chunksize * diff_thresh
-
-#        print "dist %f; threshold %d" % (dist, threshold)
-        return dist < threshold, dist, threshold
-
 
     def rabin_karp(self, shorter, longer, shorter_len, iters):
         threshold = THRESH * shorter_len
@@ -79,22 +58,12 @@ class SoundMatcher(object):
             shorter_name = filename1
 
 
-        longer_wave = None
-        shorter_wave = None
-
-        threshold = THRESH * shorter_len
-
-        iters = longer_len - shorter_len + 1
-        mindist2 = 99999999999999999999999999999
-        thresh2 = 0
-        maxpctmatch = 0
-
         name1 = os.path.basename(shorter_name)
         name2 = os.path.basename(longer_name)
 
 
         if not self.rabin_karp(shorter, longer, shorter_len, iters):
-          print "NO MATCH %s %s" % (name1, name2)
+          print "NO MATCH"
           return
         
 

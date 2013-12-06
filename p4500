@@ -5,7 +5,6 @@ import os
 import subprocess
 import sys
 import tempfile
-import warnings
 import wave
 from fingerprinter import *
 from soundmatcher import *
@@ -78,9 +77,6 @@ def craft_set(opt, path):
         return retset
 
 def convert_wave(filename):
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        inln = os.tmpnam()
     outfd, outfile = tempfile.mkstemp()
     
     file_type = verify_file(filename)
@@ -94,10 +90,6 @@ def convert_wave(filename):
     # Encode input as mono
     command.extend(["-m", "m"])
     
-    # DO SPECIFIC MP3 AND WAVE DECODING HERE
-    #if file_type == "MP3":
-    #if file_type == "WAVE":
-
     # 16-bit width
     command.extend(["-b", "16"])
     
@@ -109,11 +101,8 @@ def convert_wave(filename):
     # mp3input
     command2.extend(["--mp3input"])
 
-    # Temporary symlink to ignore source file extension
-    os.symlink(os.path.join(CWD, filename), inln)
-
     # Input file
-    command.extend([inln])
+    command.extend([filename])
     command2.extend([tfile])
 
     # Output file
@@ -124,9 +113,6 @@ def convert_wave(filename):
     with open(os.devnull, "w") as fnull:
         subprocess.call(command, stdout=fnull, stderr=fnull, cwd=CWD)
         subprocess.call(command2, stdout=fnull, stderr=fnull, cwd=CWD)
-
-    # Remove the temporary symlink
-    os.unlink(inln)
 
     return open(outfile)
 
@@ -173,18 +159,6 @@ def main():
         if not fp.in_database(filename):
             fp.add_fingerprint(filename, wavefile)
 
-
-    #printing some fp stuff 
-    #fpdb = fp.get_database()
-    #for filename in input_set1:
-      #print "%s: " % filename,
-      #print fpdb[filename]
-
-    #for filename in input_set2:
-      #print "%s: " % filename,
-      #print fpdb[filename]
-
-    #sys.exit(0)
 
     # Perform the matching operation between files
 
