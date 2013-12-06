@@ -2,3 +2,5 @@
 *.tar.gz
 *.txt
 *.swp
+!*fails*.txt
+sort.py

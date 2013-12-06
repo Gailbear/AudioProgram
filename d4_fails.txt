@@ -1,0 +1,5 @@
+MATCH y1.wav r2.wav (index 0; dist: 40; thresh: 1605)
+MATCH y4.wav r1.wav (index 0; dist: 40; thresh: 1605)
+MATCH y2.wav r2.wav (index 0; dist: 344; thresh: 1605)
+MATCH y3.wav r2.wav (index 0; dist: 144; thresh: 1605)
+MATCH y5.wav r1.wav (index 0; dist: 40; thresh: 1605)

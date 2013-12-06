@@ -1,0 +1,6 @@
+MATCH z01.wav MMW.wav (index 616; dist: 1512; thresh: 1605)
+MATCH z02.wav MMW.wav (index 581; dist: 1584; thresh: 1605)
+MATCH z16.wav WhoopeeTiYiYo.mp3 (index 772; dist: 1136; thresh: 1605)
+MATCH z17.wav WhoopeeTiYiYo.mp3 (index 5; dist: 1352; thresh: 1605)
+MATCH z19.wav WhoopeeTiYiYo.mp3 (index 742; dist: 2643; thresh: 2885)
+MATCH z20.wav WhoopeeTiYiYo.mp3 (index 0; dist: 632; thresh: 1605)
