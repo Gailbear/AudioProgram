@@ -12,6 +12,7 @@ class SoundMatcher(object):
     def __init__(self, fpdb):
         self.fpdb = fpdb
 
+
     def rabin_karp(self, shorter, longer, shorter_len, iters):
         threshold = THRESH * shorter_len
 
@@ -57,6 +58,8 @@ class SoundMatcher(object):
             shorter_len = db1len
             shorter_name = filename1
 
+
+        iters = longer_len - shorter_len + 1
 
         name1 = os.path.basename(shorter_name)
         name2 = os.path.basename(longer_name)
