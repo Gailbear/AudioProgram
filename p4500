@@ -95,7 +95,8 @@ def convert_wave(filename):
     command.extend(["-m", "m"])
     
     # DO SPECIFIC MP3 AND WAVE DECODING HERE
-    #if file_type == "MP3":
+    if file_type == "MP3":
+        command.extend(["--mp3input"])
     #if file_type == "WAVE":
 
     # 16-bit width
